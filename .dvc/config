@@ -1,4 +1,4 @@
 [core]
-    remote = myremote
-['remote "myremote"']
+    remote = gcs-flock
+['remote "gcs-flock"']
     url = gs://dvc-cs234
