@@ -6,7 +6,10 @@ tqdm==4.65.0
 jupyterlab
 jupyterlab-git
 ipywidgets
-xeus-python
+#xeus-python
 dvc
 ipython-sql
-psycopg2
+psycopg2-binary
+bash_kernel
+dvclive
+matplot

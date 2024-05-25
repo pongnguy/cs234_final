@@ -15,6 +15,9 @@ class ModifiedTrainer(Trainer):
             labels=inputs["input_ids"],
         ).loss
 
+    def PrinterCallback(self):
+        raise NotImplementedError()
+
 
 def data_collator(features: list) -> dict:
     return {"input_ids": torch.stack([torch.LongTensor(f) for f in features])}
