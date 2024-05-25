@@ -7,6 +7,7 @@ from transformers import Trainer
 
 
 class ModifiedTrainer(Trainer):
+    # Alfred change the loss function for running training again
     def compute_loss(self, model, inputs, return_outputs=False):
         return model(
             input_ids=inputs["input_ids"],
