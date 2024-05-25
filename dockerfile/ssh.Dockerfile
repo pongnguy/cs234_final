@@ -1,4 +1,4 @@
-FROM gcr.io/flock-zerobudget/cs234-final
+FROM gcr.io/flock-zerobudget/cs234-final:alfred
 
 RUN apt update && apt install  openssh-server sudo -y
 
