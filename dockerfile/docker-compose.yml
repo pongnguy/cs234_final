@@ -18,7 +18,8 @@ services:
         constraints:
           - node.hostname==r73043420
     volumes:
-      - ./volumes:/var/lib/postgresql/data
+      # create folder first, and may need to change permissions afterwards for saving with dvc
+      - ./volumes/postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=Cc17931793
       - POSTGRES_USER=alfred
