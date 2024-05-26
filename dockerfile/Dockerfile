@@ -74,9 +74,29 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \
   apt-get update && apt-get install -y google-cloud-cli
-#RUN gcloud init
-RUN --mount=type=secret,id=gcloud-key \
-  gcloud auth login --cred-file=/run/secrets/gcloud-key
+RUN --mount=type=cache,target=/root/.cache/pip \
+  venv/bin/pip install dvc[gs]
+
+RUN --mount=type=secret,id=gcloud-serviceaccount \
+    mkdir -p /root/.config/gcloud/ && \
+#    cp /run/secrets/gcloud-serviceaccount /root/.config/gcloud/serviceaccount.json
+    gcloud auth login --cred-file=/run/secrets/gcloud-serviceaccount
+
+RUN gcloud init
+RUN gcloud iam service-accounts keys create /root/.config/gcloud/serviceaccount.json --iam-account=cloudstorage@flock-zerobudget.iam.gserviceaccount.com
+
+RUN gcloud auth activate-service-account --key-file=/root/.config/gcloud/serviceaccount.json
+ENV GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/serviceaccount.json
+#RUN gcloud auth application-default login
+#RUN gcloud config set project flock-zerobudget && \
+#    gcloud auth application-default set-quota-project flock-zerobudget
+
+##RUN --mount=type=secret,id=gcloud-adc \
+##    mkdir -p /root/.config/gcloud/ && \
+##    cp /run/secrets/gcloud-adc /root/.config/gcloud/application_default_credentials.json
+
+
+
 
 
 #COPY --link ./ /mnt/host/
@@ -107,3 +127,27 @@ RUN touch /root/.no_auto_tmux
 #ENTRYPOINT ["/root/miniconda3/bin/conda", "activate", "cs234_hw3"]
 #RUN echo "source /root/miniconda3/bin/activate cs234_hw3" >> ~/.bashrc
 #ENTRYPOINT . ~/.bashrc && conda activate cs234_hw3
+
+
+RUN apt update && apt install  openssh-server sudo -y
+
+#RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 alfred
+
+RUN echo 'root:Cc17931793' | chpasswd #echo 'alfred:Cc17931793' | chpasswd
+
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+    #sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd && \
+    #echo 'export NOTVISIBLE="in users profile"' >> ~/.bashrc && \
+    #echo "export VISIBLE=now" >> /etc/profile
+
+RUN service ssh start
+
+## copy pycharm remote dev
+#RUN mkdir -p /mnt/.cache/JetBrains/RemoteDev/dist
+#COPY --link --from=remotedev dist/ /mnt/.cache/JetBrains/RemoteDev/dist/
+RUN touch /root/.no_auto_tmux
+#RUN if ! [ -d /home/alfred ]; then mkdir /home/alfred; fi; chown -R alfred /home/alfred
+
+EXPOSE 22
+
+ENTRYPOINT ["/usr/sbin/sshd","-D"]
