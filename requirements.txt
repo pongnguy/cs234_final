@@ -7,7 +7,7 @@ jupyterlab
 jupyterlab-git
 ipywidgets
 #xeus-python
-dvc
+dvc[gs]
 ipython-sql
 psycopg2-binary
 bash_kernel

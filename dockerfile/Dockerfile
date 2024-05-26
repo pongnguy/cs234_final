@@ -61,11 +61,22 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 RUN --mount=type=cache,target=/root/.cache/pip \
   venv/bin/pip install -r requirements.txt
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-  venv/bin/pip install jupyter
-
 #RUN --mount=type=cache,target=/root/.cache/pip \
 #  venv/bin/pip install -e .
+
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+  apt-get install -y apt-transport-https ca-certificates gnupg curl
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+  apt-get update && apt-get install -y google-cloud-cli
+#RUN gcloud init
+RUN --mount=type=secret,id=gcloud-key \
+  gcloud auth login --cred-file=/run/secrets/gcloud-key
 
 
 #COPY --link ./ /mnt/host/
