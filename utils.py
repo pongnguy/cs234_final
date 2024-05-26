@@ -37,17 +37,21 @@ class PrinterCallback(TrainerCallback):
 class DatabaseCallback(TrainerCallback):
     repo = git.Repo(search_parent_directories=True)
 
+    def __init__(self, *args, host, database, user, password):
+        super.__init__(self, *args)
+        self.conn_info = {}
+        self.conn_info["host"] = host
+        self.conn_info["database"] = database
+        self.conn_info["user"] = user
+        self.conn_info["password"] = password
+        self.conn = psycopg2.connect(host=self.conn_info["host"], database=self.conn_info["database"], user=self.conn_info["user"], password=self.conn_info["password"])
+
     def on_log(self, args, state, control, logs=None, **kwargs):
         _ = logs.pop("total_flos", None)
         if state.is_local_process_zero:
-            with psycopg2.connect() as connection:
-            #open("logs/BLOOM-fine-tune.log", "a") as f:
-                sha = self.repo.head.object.hexsha
-                logs_add = logs
-                logs_add["git-repository"] = self.repo
-                logs_add["git-commit"] = sha
-                logs_add["date"] = datetime.now()
-                #f.write(str(logs_add))
+            with self.conn.cursor() as cur:
+                cur.execute(f"INSERT INTO logs (date,git-commit,git-repository,rest) VALUES ('{self.repo}','{self.repo.head.object.hexsha}','{datetime.now()}','{logs}')")
+                self.conn.commit()
 
 def data_collator(features: list) -> dict:
     return {"input_ids": torch.stack([torch.LongTensor(f) for f in features])}
