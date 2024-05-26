@@ -3,7 +3,11 @@ from typing import Optional
 
 import torch
 import tqdm
-from transformers import Trainer
+from transformers import Trainer, TrainerCallback
+
+import psycopg2
+from datetime import datetime
+import git
 
 
 class ModifiedTrainer(Trainer):
@@ -15,9 +19,35 @@ class ModifiedTrainer(Trainer):
             labels=inputs["input_ids"],
         ).loss
 
-    def PrinterCallback(self):
-        raise NotImplementedError()
+class PrinterCallback(TrainerCallback):
+    repo = git.Repo(search_parent_directories=True)
 
+    def on_log(self, args, state, control, logs=None, **kwargs):
+        _ = logs.pop("total_flos", None)
+        if state.is_local_process_zero:
+            with open("logs/BLOOM-fine-tune.log", "a") as f:
+                sha = self.repo.head.object.hexsha
+                logs_add = logs
+                logs_add["git-repository"] = self.repo
+                logs_add["git-commit"] = sha
+                logs_add["date"] = datetime.now()
+                f.write(str(logs_add))
+
+
+class DatabaseCallback(TrainerCallback):
+    repo = git.Repo(search_parent_directories=True)
+
+    def on_log(self, args, state, control, logs=None, **kwargs):
+        _ = logs.pop("total_flos", None)
+        if state.is_local_process_zero:
+            with psycopg2.connect() as connection:
+            #open("logs/BLOOM-fine-tune.log", "a") as f:
+                sha = self.repo.head.object.hexsha
+                logs_add = logs
+                logs_add["git-repository"] = self.repo
+                logs_add["git-commit"] = sha
+                logs_add["date"] = datetime.now()
+                #f.write(str(logs_add))
 
 def data_collator(features: list) -> dict:
     return {"input_ids": torch.stack([torch.LongTensor(f) for f in features])}
