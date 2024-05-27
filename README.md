@@ -7,6 +7,10 @@ gcloud auth application-default login
 
 ```
 
+```bash
+http://localhost:8080/lab?token=
+ ```
+
 This project is for fine-tuning BLOOM. The repo contains:
 - We use [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca).
 

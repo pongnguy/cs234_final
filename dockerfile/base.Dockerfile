@@ -134,5 +134,5 @@ RUN git config --global --add safe.directory /mnt/host/cs234_final
 #ENTRYPOINT ["/tini", "--"]
 #CMD ["/usr/sbin/sshd", "-D"]
 ENV SHELL=/bin/bash
-ENTRYPOINT ["/bin/bash", "-c", "service ssh restart && /mnt/host/cs234_final/venv/bin/python /mnt/host/cs234_final/venv/bin/jupyter-lab --allow-root --autoreload --no-browser --ip '*'"]
+ENTRYPOINT ["/bin/bash", "-c", "service ssh restart && /mnt/host/cs234_final/venv/bin/python /mnt/host/cs234_final/venv/bin/jupyter-lab --allow-root --autoreload --no-browser --ip '*' --port 8080 --IdentityProvider.token=f9a3bd4e9f2c3be01cd629154cfb224c2703181e050254b5"]
 #ENTRYPOINT ["/bin/bash", "-c", "service", "ssh", "restart &&", "/mnt/host/cs234_final/venv/bin/python", "jupyter", "lab", "--allow-root", "--autoreload", "--no-browser", "--ip '*'"]
