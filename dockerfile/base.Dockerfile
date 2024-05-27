@@ -130,6 +130,9 @@ EXPOSE 22
 
 RUN git config --global --add safe.directory /mnt/host/cs234_final
 
+RUN --mount=type=cache,target=/root/.cache/pip \
+  venv/bin/pip install -U datasets
+
 #RUN apt-get install tini
 #ENTRYPOINT ["/tini", "--"]
 #CMD ["/usr/sbin/sshd", "-D"]

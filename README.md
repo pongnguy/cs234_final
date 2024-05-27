@@ -11,6 +11,11 @@ gcloud auth application-default login
 http://localhost:8080/lab?token=
  ```
 
+``` bash
+docker build -f dockerfile/base.Dockerfile -t gcr.io/flock-zerobudget/cs234-final:alfred .
+docker run -v .:/mnt/host/cs234_final -p 8888:8888 -p 23:22 -it gcr.io/flock-zerobudget/cs234-final:alfred
+```
+
 This project is for fine-tuning BLOOM. The repo contains:
 - We use [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca).
 

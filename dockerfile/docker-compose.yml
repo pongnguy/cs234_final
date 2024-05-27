@@ -17,6 +17,7 @@ services:
       placement:
         constraints:
           - node.hostname==r73043420
+#          - node.labels.database == true # only deploy on nodes with label database=true
     volumes:
       # create folder first, and may need to change permissions afterwards for saving with dvc
       - ./volumes/postgres:/var/lib/postgresql/data
@@ -24,3 +25,10 @@ services:
       - POSTGRES_PASSWORD=Cc17931793
       - POSTGRES_USER=alfred
       - POSTGRES_DB=cs234_db
+#    env_file:
+#      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 30s
+      timeout: 30s
+      retries: 3
