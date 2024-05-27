@@ -133,6 +133,13 @@ RUN git config --global --add safe.directory /mnt/host/cs234_final
 RUN --mount=type=cache,target=/root/.cache/pip \
   venv/bin/pip install -U datasets
 
+# install minio client for syncing checkpoint with object server
+RUN curl https://dl.min.io/client/mc/release/linux-amd64/mc \
+  --create-dirs \
+  -o $HOME/minio-binaries/mc
+RUN chmod +x $HOME/minio-binaries/mc
+RUN export PATH=$PATH:$HOME/minio-binaries/
+
 #RUN apt-get install tini
 #ENTRYPOINT ["/tini", "--"]
 #CMD ["/usr/sbin/sshd", "-D"]
