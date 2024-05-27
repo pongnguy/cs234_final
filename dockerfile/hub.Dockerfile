@@ -1,5 +1,5 @@
 
-FROM dzcr/cs234-final
+FROM dzcr/cs234-final:base
 
 ENV DEBIAN_FRONTEND=noninteractive
 
