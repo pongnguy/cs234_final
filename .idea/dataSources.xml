@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="cs234_db@postgres.diezcansecoramirez.com" uuid="ce7f549f-d9ab-4b41-9c72-cc11a1a0df4b">
+    <data-source source="LOCAL" name="cs234_db@localhost" uuid="bb4fdbc8-e681-401a-b700-d6c8ed127ee8">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5433/cs234_db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="cs234_db@postgres.diezcansecoramirez.com" uuid="23eab858-e895-4742-b20b-072c2baa90f3">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
