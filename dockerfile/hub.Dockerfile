@@ -29,6 +29,6 @@ EXPOSE 22
 
 RUN apt-get install tini
 ENTRYPOINT ["/tini", "--"]
-#CMD ["/usr/sbin/sshd &", "/mnt/host/cs234_final/venv/bin/python", "/mnt/host/cs234_final/main.py]
+CMD ["/usr/sbin/sshd", "-D"]
 #ENTRYPOINT ["/usr/sbin/sshd","-D"]
-CMD ["/mnt/host/cs234_final/venv/bin/python", "jupyter", "lab", "--allow-root", "--autoreload", "--no-browser"]
+#CMD ["/mnt/host/cs234_final/venv/bin/python", "jupyter", "lab", "--allow-root", "--autoreload", "--no-browser"]

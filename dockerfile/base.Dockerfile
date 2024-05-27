@@ -128,8 +128,11 @@ RUN touch /root/.no_auto_tmux
 
 EXPOSE 22
 
-RUN apt-get install tini
-ENTRYPOINT ["/tini", "--"]
-CMD ["/usr/sbin/sshd", "-D"]
-#ENTRYPOINT ["/usr/sbin/sshd","-D"]
-#CMD ["/mnt/host/cs234_final/venv/bin/python", "jupyter", "lab", "--allow-root", "--autoreload", "--no-browser"]
+RUN git config --global --add safe.directory /mnt/host/cs234_final
+
+#RUN apt-get install tini
+#ENTRYPOINT ["/tini", "--"]
+#CMD ["/usr/sbin/sshd", "-D"]
+ENV SHELL=/bin/bash
+ENTRYPOINT ["/bin/bash", "-c", "service ssh restart && /mnt/host/cs234_final/venv/bin/python /mnt/host/cs234_final/venv/bin/jupyter-lab --allow-root --autoreload --no-browser --ip '*'"]
+#ENTRYPOINT ["/bin/bash", "-c", "service", "ssh", "restart &&", "/mnt/host/cs234_final/venv/bin/python", "jupyter", "lab", "--allow-root", "--autoreload", "--no-browser", "--ip '*'"]
