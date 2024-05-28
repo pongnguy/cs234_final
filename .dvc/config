@@ -1,4 +1,0 @@
-[core]
-    remote = gcs-flock
-['remote "gcs-flock"']
-    url = gs://dvc-cs234
