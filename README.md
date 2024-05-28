@@ -1,3 +1,11 @@
+# Alfred
+
+For committing local postgres volume which has root as owner due to running docker container as root
+```bash
+sudo $(which dvc) commit
+sudo $(which dvc) push
+```
+
 # minChatGPT
 
 This is a custom project from [Stanford CS224N Winter 2023](https://web.stanford.edu/class/cs224n/) class. The goal of this project is to answer this question

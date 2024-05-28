@@ -5,11 +5,12 @@ services:
     image: postgres:16
     # Alfred for allowing more workers
     # TODO load custom postgresql.conf or change inside container when creating: work_mem = 6GB, maintenance_work_mem = 6GB
-    privileged: true
+    #privileged: true
     #user: postgres
     restart: always
     shm_size: 4g
     command: postgres #--config-file=/var/lib/pgsql/data/postgresql.conf #/usr/lib/postgresql/16/bin/postgres
+    #user: alfred
     ports:
       - 5433:5432
     # TODO also expose unix socket for direct local connection
@@ -20,7 +21,7 @@ services:
 #          - node.labels.database == true # only deploy on nodes with label database=true
     volumes:
       # create folder first, and may need to change permissions afterwards for saving with dvc
-      - ./volumes/postgres:/var/lib/postgresql/data
+      - postgres-cs234:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=Cc17931793
       - POSTGRES_USER=alfred
@@ -32,3 +33,7 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
+
+volumes:
+  postgres-cs234:
+    driver: local
