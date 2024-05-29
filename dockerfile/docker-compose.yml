@@ -21,6 +21,13 @@ services:
 #          - node.labels.database == true # only deploy on nodes with label database=true
     # need to remove container entrypoint if running with pycharm compose interpreter
     entrypoint: []
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
     volumes:
       # create folder first, and may need to change permissions afterwards for saving with dvc
       - cloud-cs234:/mnt/data
