@@ -21,6 +21,7 @@ services:
 #          - node.labels.database == true # only deploy on nodes with label database=true
     # need to remove container entrypoint if running with pycharm compose interpreter
     entrypoint: []
+    command: venv/bin/python src/main.py --task gpt
     deploy:
       resources:
         reservations:

@@ -5,6 +5,10 @@ For committing local postgres volume which has root as owner due to running dock
 sudo $(which dvc) commit
 sudo $(which dvc) push
 ```
+```bash
+docker compose -f dockerfile/docker-compose.yml up cloud
+docker compose -f dockerfile/docker-compose.yml run cloud venv/bin/python src/main.py --task gpt
+```
 
 # minChatGPT
 
