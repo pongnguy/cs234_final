@@ -72,3 +72,5 @@ Werkzeug==2.2.3
 xxhash==3.2.0
 yapf==0.32.0
 yarl==1.8.2
+
+jupyterlab

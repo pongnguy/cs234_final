@@ -31,7 +31,15 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \
   apt-get install -y git
 
+RUN --mount=type=cache,target=/root/.cache/pip \
+  venv/bin/pip install accelerate
 
+# install minio client for syncing checkpoint with object server
+RUN curl https://dl.min.io/client/mc/release/linux-amd64/mc \
+  --create-dirs \
+  -o $HOME/minio-binaries/mc
+RUN chmod +x $HOME/minio-binaries/mc
+RUN export PATH=$PATH:$HOME/minio-binaries/
 
 # copy code
 RUN mkdir -p /mnt/host
@@ -42,20 +50,22 @@ RUN mkdir -p /mnt/host
 #    --mount=target=/var/cache/apt,type=cache,sharing=locked \
 #  apt-get update
 
-# this should not invalidate cache since the command is the same
+# this whould not invalidate cache for commits on same branch
+# only invalidate cache on branch changes
 RUN cd /mnt/host && \
-    git clone "https://github.com/pongnguy/cs234_final" cs234_final
+    git clone "https://github.com/pongnguy/cs234_final" cs234_final && \
+    cd cs234_final && \
+    git checkout dev/minChatGPT
 #RUN mv /mnt/host/venv /mnt/host/cs234/venv
 
 WORKDIR /mnt/host/cs234_final
-RUN git checkout main
 
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \
   virtualenv venv
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-  venv/bin/pip install accelerate
+# could conflict with pulled github version
+COPY requirements.txt /mnt/host/cs234_final/requirements.txt
 
 RUN --mount=type=cache,target=/root/.cache/pip \
   venv/bin/pip install -r requirements.txt
@@ -133,16 +143,10 @@ RUN git config --global --add safe.directory /mnt/host/cs234_final
 RUN --mount=type=cache,target=/root/.cache/pip \
   venv/bin/pip install -U datasets
 
-# install minio client for syncing checkpoint with object server
-RUN curl https://dl.min.io/client/mc/release/linux-amd64/mc \
-  --create-dirs \
-  -o $HOME/minio-binaries/mc
-RUN chmod +x $HOME/minio-binaries/mc
-RUN export PATH=$PATH:$HOME/minio-binaries/
-
 #RUN apt-get install tini
 #ENTRYPOINT ["/tini", "--"]
 #CMD ["/usr/sbin/sshd", "-D"]
 ENV SHELL=/bin/bash
 ENTRYPOINT ["/bin/bash", "-c", "service ssh restart && /mnt/host/cs234_final/venv/bin/python /mnt/host/cs234_final/venv/bin/jupyter-lab --allow-root --autoreload --no-browser --ip '*' --port 8080 --IdentityProvider.token=f9a3bd4e9f2c3be01cd629154cfb224c2703181e050254b5"]
+CMD ["git", "pull"]
 #ENTRYPOINT ["/bin/bash", "-c", "service", "ssh", "restart &&", "/mnt/host/cs234_final/venv/bin/python", "jupyter", "lab", "--allow-root", "--autoreload", "--no-browser", "--ip '*'"]

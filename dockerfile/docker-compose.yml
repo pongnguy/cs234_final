@@ -1,6 +1,41 @@
 version: "3.9"
 
 services:
+  cloud:
+    image: gcr.io/flock-zerobudget/cs234-final:alfred
+    # Alfred for allowing more workers
+    # TODO load custom postgresql.conf or change inside container when creating: work_mem = 6GB, maintenance_work_mem = 6GB
+    #privileged: true
+    #user: postgres
+    #command: postgres #--config-file=/var/lib/pgsql/data/postgresql.conf #/usr/lib/postgresql/16/bin/postgres
+    #user: alfred
+    # change user and group to 1001 for postgres to match host user
+    # usermod -u 1001 postgres; groupmod -g 1001 postgres; find / -user 999 -exec chown -h 1001 {} \; find / -group 999 -exec chgrp -h 1001 {} \; usermod -g 1001 postgres
+    ports:
+      - 8080:8080
+    # TODO also expose unix socket for direct local connection
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.hostname==r73043420
+#          - node.labels.database == true # only deploy on nodes with label database=true
+    # need to remove container entrypoint if running with pycharm compose interpreter
+    entrypoint: []
+    volumes:
+      # create folder first, and may need to change permissions afterwards for saving with dvc
+      - cloud-cs234:/mnt/data
+#    environment:
+#      - POSTGRES_PASSWORD=Cc17931793
+#      - POSTGRES_USER=alfred
+#      - POSTGRES_DB=cs234_db
+#    env_file:
+#      - .env
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+#      interval: 30s
+#      timeout: 30s
+#      retries: 3
+
   postgres:
     image: postgres:16
     # Alfred for allowing more workers
@@ -11,6 +46,8 @@ services:
     shm_size: 4g
     command: postgres #--config-file=/var/lib/pgsql/data/postgresql.conf #/usr/lib/postgresql/16/bin/postgres
     #user: alfred
+    # change user and group to 1001 for postgres to match host user
+    # usermod -u 1001 postgres; groupmod -g 1001 postgres; find / -user 999 -exec chown -h 1001 {} \; find / -group 999 -exec chgrp -h 1001 {} \; usermod -g 1001 postgres
     ports:
       - 5433:5432
     # TODO also expose unix socket for direct local connection
@@ -36,4 +73,6 @@ services:
 
 volumes:
   postgres-cs234:
+    driver: local
+  cloud-cs234:
     driver: local
